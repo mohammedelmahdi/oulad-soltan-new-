@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Booking, Rider } from '../types';
 import { Award, Users, ShieldCheck, Scroll, TrendingUp, Calendar, MapPin, Sparkles, Scale, Hash, Coins, Search, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { sortBookingsByNearest } from '../utils/bookingSort';
 
 interface AdminStatsViewProps {
   bookings: Booking[];
@@ -186,7 +187,7 @@ export default function AdminStatsView({
               remainingQuantityKg < 0 ? 'border-red-500/50 bg-red-500/5' : 'border-white/10'
             }`} id="stat-card-remaining-powder">
               <div>
-                <span className="text-[10px] font-bold text-slate-400">البارود المتبقي في المخزن</span>
+                <span className="text-[10px] font-bold text-slate-400">ب المتبقي في المخزن</span>
                 <p className={`text-xl font-bold font-headline mt-1 ${
                   remainingQuantityKg < 0 ? 'text-red-400' : 'text-amber-400'
                 }`} dir="ltr">
@@ -205,7 +206,7 @@ export default function AdminStatsView({
               remainingCountRequired < 0 ? 'border-red-500/50 bg-red-500/5' : 'border-white/10'
             }`} id="stat-card-remaining-gear">
               <div>
-                <span className="text-[10px] font-bold text-slate-400">الكبسول المتبقي في المخزن</span>
+                <span className="text-[10px] font-bold text-slate-400">ك المتبقي في المخزن</span>
                 <p className={`text-xl font-bold font-headline mt-1 ${
                   remainingCountRequired < 0 ? 'text-red-400' : 'text-teal-300'
                 }`}>
@@ -352,7 +353,7 @@ export default function AdminStatsView({
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-300">إجمالي كمية البارود المتوفرة (كغ):</label>
+                    <label className="text-xs font-bold text-slate-300">إجمالي كمية ب المتوفرة (كغ):</label>
                     <div className="relative">
                       <input
                         type="number"
@@ -368,7 +369,7 @@ export default function AdminStatsView({
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-300">إجمالي كمية الكبسول المتوفرة (حبة):</label>
+                    <label className="text-xs font-bold text-slate-300">إجمالي كمية ك المتوفرة (حبة):</label>
                     <div className="relative">
                       <input
                         type="number"
@@ -390,8 +391,8 @@ export default function AdminStatsView({
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4" id="powder-progress-box">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-sm font-bold text-white">مخزون البارود الملتزم به</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">معدل استهلاك البارود المحجوز للعروض النشطة</p>
+                    <h4 className="text-sm font-bold text-white">مخزون ب الملتزم به</h4>
+                    <p className="text-[10px] text-slate-400 mt-0.5">معدل استهلاك ب المحجوز للعروض النشطة</p>
                   </div>
                   <span className="p-2 bg-amber-500/10 text-amber-300 rounded-lg text-xs font-bold" dir="ltr">
                     {totalQuantityKg.toFixed(1)} / {ownedQuantityKg} كغ
@@ -410,7 +411,7 @@ export default function AdminStatsView({
                   </div>
                   <div className="flex justify-between text-[10px] font-bold">
                     <span className={remainingQuantityKg < 0 ? 'text-red-400' : 'text-emerald-400'}>
-                      {remainingQuantityKg < 0 ? 'عجز في مخزن البارود!' : `المتبقي الصافي: ${remainingQuantityKg.toFixed(1)} كغ`}
+                      {remainingQuantityKg < 0 ? 'عجز في مخزن ب!' : `المتبقي الصافي: ${remainingQuantityKg.toFixed(1)} كغ`}
                     </span>
                     <span className="text-slate-400">
                       {Math.round((totalQuantityKg / (ownedQuantityKg || 1)) * 100)}% مستهلك
@@ -422,7 +423,7 @@ export default function AdminStatsView({
                   <div className="bg-red-500/10 border border-red-500/20 text-red-300 p-3 rounded-xl flex items-start gap-2 text-xs" id="powder-deficit-alert">
                     <AlertCircle size={16} className="shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">تحذير: عجز في مخزون البارود!</p>
+                      <p className="font-bold">تحذير: عجز في مخزون ب!</p>
                       <p className="opacity-80 text-[10px] mt-0.5">تحتاج إلى إضافة {Math.abs(remainingQuantityKg).toFixed(1)} كغ على الأقل في الإعدادات لتغطية متطلبات العروض النشطة.</p>
                     </div>
                   </div>
@@ -433,8 +434,8 @@ export default function AdminStatsView({
               <div className="bg-white/5 border border-white/10 rounded-2xl p-5 space-y-4" id="gear-progress-box">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-sm font-bold text-white">مخزون الكبسول الملتزم به</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">معدل استهلاك حبات الكبسول المطلوبة من قبل أصحاب الحجوزات</p>
+                    <h4 className="text-sm font-bold text-white">مخزون ك الملتزم به</h4>
+                    <p className="text-[10px] text-slate-400 mt-0.5">معدل استهلاك حبات ك المطلوبة من قبل أصحاب الحجوزات</p>
                   </div>
                   <span className="p-2 bg-teal-500/10 text-teal-300 rounded-lg text-xs font-bold">
                     {totalCountRequired} / {ownedCount} حبة
@@ -453,7 +454,7 @@ export default function AdminStatsView({
                   </div>
                   <div className="flex justify-between text-[10px] font-bold">
                     <span className={remainingCountRequired < 0 ? 'text-red-400' : 'text-emerald-400'}>
-                      {remainingCountRequired < 0 ? 'عجز في مخزون الكبسول!' : `المتبقي الصافي: ${remainingCountRequired} حبة`}
+                      {remainingCountRequired < 0 ? 'عجز في مخزون ك!' : `المتبقي الصافي: ${remainingCountRequired} حبة`}
                     </span>
                     <span className="text-slate-400">
                       {Math.round((totalCountRequired / (ownedCount || 1)) * 100)}% مستهلك
@@ -465,7 +466,7 @@ export default function AdminStatsView({
                   <div className="bg-red-500/10 border border-red-500/20 text-red-300 p-3 rounded-xl flex items-start gap-2 text-xs" id="gear-deficit-alert">
                     <AlertCircle size={16} className="shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">تحذير: عجز في مخزون الكبسول!</p>
+                      <p className="font-bold">تحذير: عجز في مخزون ك!</p>
                       <p className="opacity-80 text-[10px] mt-0.5">تحتاج إلى توفير {Math.abs(remainingCountRequired)} حبة إضافية لتغطية متطلبات العروض النشطة.</p>
                     </div>
                   </div>
@@ -566,23 +567,25 @@ export default function AdminStatsView({
 
             {/* Payments ledger list */}
             {(() => {
-              const filteredBookings = billingBookings
-                .filter((b) => {
-                  const totalPr = b.totalPrice || 0;
-                  const paidAm = b.paidAmount || 0;
-                  if (paymentFilter === 'paid') return totalPr > 0 && paidAm >= totalPr;
-                  if (paymentFilter === 'partial') return paidAm > 0 && paidAm < totalPr;
-                  if (paymentFilter === 'unpaid') return totalPr > 0 && paidAm === 0;
-                  return true;
-                })
-                .filter((b) => {
-                  if (!paymentSearch.trim()) return true;
-                  const s = paymentSearch.toLowerCase();
-                  return (
-                    b.customerName.toLowerCase().includes(s) ||
-                    b.wilaya.toLowerCase().includes(s)
-                  );
-                });
+              const filteredBookings = sortBookingsByNearest(
+                billingBookings
+                  .filter((b) => {
+                    const totalPr = b.totalPrice || 0;
+                    const paidAm = b.paidAmount || 0;
+                    if (paymentFilter === 'paid') return totalPr > 0 && paidAm >= totalPr;
+                    if (paymentFilter === 'partial') return paidAm > 0 && paidAm < totalPr;
+                    if (paymentFilter === 'unpaid') return totalPr > 0 && paidAm === 0;
+                    return true;
+                  })
+                  .filter((b) => {
+                    if (!paymentSearch.trim()) return true;
+                    const s = paymentSearch.toLowerCase();
+                    return (
+                      b.customerName.toLowerCase().includes(s) ||
+                      b.wilaya.toLowerCase().includes(s)
+                    );
+                  })
+              );
 
               return (
                 <>
@@ -593,7 +596,7 @@ export default function AdminStatsView({
                         <tr className="bg-white/5 text-slate-400 border-b border-white/5 font-bold">
                           <th className="px-5 py-3 text-right">صاحب الحجز</th>
                           <th className="px-5 py-3 text-right">التاريخ والولاية</th>
-                          <th className="px-5 py-3 text-center">البارود والكبسول المطلوب</th>
+                          <th className="px-5 py-3 text-center">ب و ك المطلوب</th>
                           <th className="px-5 py-3 text-left">سعر الحجز</th>
                           <th className="px-5 py-3 text-left">المدفوع بالفعل</th>
                           <th className="px-5 py-3 text-left">المبلغ المتبقي</th>
@@ -636,8 +639,8 @@ export default function AdminStatsView({
                                 <p className="text-[10px] text-slate-500">{b.wilaya}</p>
                               </td>
                               <td className="px-5 py-4 text-center space-y-0.5">
-                                <p className="text-amber-400 font-semibold" dir="ltr">{b.quantityKg || 0} كغ بارود</p>
-                                <p className="text-[10px] text-slate-400">{b.count || 0} حبة كبسول</p>
+                                <p className="text-amber-400 font-semibold" dir="ltr">{b.quantityKg || 0} كغ ب</p>
+                                <p className="text-[10px] text-slate-400">{b.count || 0} حبة ك</p>
                               </td>
                               <td className="px-5 py-4 text-left font-bold text-white font-headline" dir="ltr">
                                 {totalPr.toLocaleString()} دج
@@ -707,7 +710,7 @@ export default function AdminStatsView({
 
                           <div className="grid grid-cols-2 gap-2 bg-white/5 p-2.5 rounded-xl text-[11px] border border-white/5 text-right">
                             <div>
-                              <span className="text-slate-400 block text-right">البارود والكبسول</span>
+                              <span className="text-slate-400 block text-right">ب و ك</span>
                               <span className="text-amber-400 font-bold text-right inline-block w-full" dir="ltr">{b.quantityKg || 0} كغ / {b.count || 0} حبة</span>
                             </div>
                             <div>

@@ -332,11 +332,11 @@ export default function AdminCalendarView({
                   <div
                     key={b.id}
                     onClick={() => openEditBookingModal(b)}
-                    className={`glass-card-interactive p-5 flex flex-col justify-between items-start gap-4 border border-white/10 hover:scale-[1.005] transition-all duration-200 relative cursor-pointer ${
+                    className={`glass-card-interactive p-5 flex flex-col justify-between items-start gap-4 border border-white/10 hover:scale-[1.005] transition-all duration-300 relative cursor-pointer ${
                       activeMenuId === b.id ? 'z-30' : 'z-10'
                     } ${
                       isPending ? 'heritage-border-gold' : 'heritage-border'
-                    } ${isCompleted ? 'opacity-70' : ''}`}
+                    } ${isCompleted ? 'opacity-45 grayscale-[45%] saturate-50 blur-[0.75px] hover:opacity-90 hover:grayscale-0 hover:blur-0' : ''}`}
                     title="اضغط لتعديل معلومات الحجز"
                   >
                     <div className="flex flex-col gap-1 w-full text-right">

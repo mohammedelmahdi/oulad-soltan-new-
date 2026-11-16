@@ -21,6 +21,7 @@ import {
   registerNotificationServiceWorker,
   showBrowserNotification,
 } from './lib/notifications';
+import { sortBookingsByNearest } from './utils/bookingSort';
 
 export default function App() {
   // 1. Core Persistent State
@@ -133,9 +134,9 @@ export default function App() {
         snapshot.forEach((docSnap) => {
           list.push(docSnap.data() as Booking);
         });
-        list.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-        setBookings(list);
-        localStorage.setItem('gac_bookings', JSON.stringify(list));
+        const sortedList = sortBookingsByNearest(list);
+        setBookings(sortedList);
+        localStorage.setItem('gac_bookings', JSON.stringify(sortedList));
       },
       (error) => {
         handleFirestoreError(error, OperationType.LIST, 'bookings');

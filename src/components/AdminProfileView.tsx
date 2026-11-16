@@ -339,16 +339,16 @@ export default function AdminProfileView({
         <div className="glass-card p-6 border border-white/10 space-y-6">
           <h3 className="text-base font-bold text-white flex items-center gap-2 border-b border-white/5 pb-3">
             <Scale size={18} className="text-indigo-400" />
-            إدارة المخزون والكبسول (ما تملكه الجمعية)
+            إدارة المخزون (ب و ك)
           </h3>
           <p className="text-xs text-slate-400 font-medium">
-            أدخل إجمالي كمية البارود والكبسول المتوفر الذي تملكه الجمعية حالياً لتتبع الكميات المتبقية والصافية تلقائياً بعد خصم متطلبات العروض النشطة.
+            أدخل إجمالي كمية ب و ك المتوفر الذي تملكه الجمعية حالياً لتتبع الكميات المتبقية والصافية تلقائياً بعد خصم متطلبات العروض النشطة.
           </p>
 
           <form onSubmit={handleSaveInventory} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-300">إجمالي كمية البارود المتوفرة (كغ)</label>
+                <label className="text-xs font-bold text-slate-300">إجمالي كمية ب المتوفرة (كغ)</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -365,7 +365,7 @@ export default function AdminProfileView({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-300">إجمالي كمية الكبسول المتوفرة (حبة/وحدة)</label>
+                <label className="text-xs font-bold text-slate-300">إجمالي كمية ك المتوفرة (حبة/وحدة)</label>
                 <div className="relative">
                   <input
                     type="number"

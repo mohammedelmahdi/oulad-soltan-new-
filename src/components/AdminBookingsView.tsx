@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Booking, Rider, BookingStatus } from '../types';
 import { ALGERIAN_WILAYAS } from '../data/seedData';
 import PrintMissionOrder from './PrintMissionOrder';
+import { sortBookingsByNearest } from '../utils/bookingSort';
 import {
   FileText,
   Clock,
@@ -126,11 +127,13 @@ export default function AdminBookingsView({
     }
   };
 
-  // Filtering bookings
-  const filteredBookings = bookings.filter((b) => {
-    if (activeFilter === 'الكل') return true;
-    return b.status === activeFilter;
-  });
+  // Filtering & sorting bookings (nearest upcoming first)
+  const filteredBookings = sortBookingsByNearest(
+    bookings.filter((b) => {
+      if (activeFilter === 'الكل') return true;
+      return b.status === activeFilter;
+    })
+  );
 
   // Calculate dynamic stats
   const totalBookingsCount = bookings.length + 1242; // Seeded count offset
@@ -234,11 +237,11 @@ export default function AdminBookingsView({
               <div
                 key={booking.id}
                 onClick={() => openEditBookingModal(booking)}
-                className={`glass-card-interactive p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-white/10 hover:scale-[1.005] transition-all duration-200 relative cursor-pointer ${
+                className={`glass-card-interactive p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-white/10 hover:scale-[1.005] transition-all duration-300 relative cursor-pointer ${
                   activeMenuId === booking.id ? 'z-30' : 'z-10'
                 } ${
                   isPending ? 'heritage-border-gold' : 'heritage-border'
-                } ${isCompleted ? 'opacity-70' : ''}`}
+                } ${isCompleted ? 'opacity-45 grayscale-[45%] saturate-50 blur-[0.75px] hover:opacity-90 hover:grayscale-0 hover:blur-0' : ''}`}
                 title="اضغط لتعديل معلومات الحجز"
               >
                 <div className="flex flex-col gap-1 w-full md:w-auto">
@@ -302,12 +305,12 @@ export default function AdminBookingsView({
                       <div className="mt-1 flex flex-wrap gap-2 text-[10px] bg-slate-950/40 p-1.5 rounded-lg border border-white/5 w-fit">
                         {booking.quantityKg !== undefined && booking.quantityKg > 0 && (
                           <span className="text-amber-300">
-                            <strong className="text-slate-400">البارود:</strong> {booking.quantityKg} كغ
+                            <strong className="text-slate-400">ب:</strong> {booking.quantityKg} كغ
                           </span>
                         )}
                         {booking.count !== undefined && booking.count > 0 && (
                           <span className="text-emerald-300">
-                            <strong className="text-slate-400">الكبسول:</strong> {booking.count} حبة
+                            <strong className="text-slate-400">ك:</strong> {booking.count} حبة
                           </span>
                         )}
                       </div>
@@ -794,7 +797,7 @@ export default function AdminBookingsView({
               {/* Three additional editable fields */}
               <div className="grid grid-cols-2 gap-2 sm:col-span-2 border-t border-white/5 pt-3">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-indigo-300">البارود (كغ)</label>
+                  <label className="text-[11px] font-bold text-indigo-300">ب (كغ)</label>
                   <input
                     type="number"
                     min="0"
@@ -807,7 +810,7 @@ export default function AdminBookingsView({
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-indigo-300">الكبسول (حبة)</label>
+                  <label className="text-[11px] font-bold text-indigo-300">ك (حبة)</label>
                   <input
                     type="number"
                     min="0"

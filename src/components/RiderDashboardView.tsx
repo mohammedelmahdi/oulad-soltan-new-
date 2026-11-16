@@ -3,6 +3,7 @@ import { Booking, Rider, AppNotification } from '../types';
 import { Calendar, MapPin, User, PhoneCall, Sparkles, LogOut, Plus, X, Send, CheckCircle, Edit, Search, Check, UserPlus, Edit2 } from 'lucide-react';
 import NotificationBell from './NotificationBell';
 import { ALGERIAN_WILAYAS } from '../data/seedData';
+import { sortBookingsByNearest } from '../utils/bookingSort';
 
 interface RiderDashboardViewProps {
   rider: Rider;
@@ -31,8 +32,10 @@ export default function RiderDashboardView({
   onUpdateBooking,
   vapidKey,
 }: RiderDashboardViewProps) {
-  // Get assignments dynamically
-  const assignedBookings = bookings.filter((b) => b.assignedRiders.includes(rider.id) || b.createdBy === `اللاعب: ${rider.name}`);
+  // Get assignments dynamically, sorted from nearest to farthest
+  const assignedBookings = sortBookingsByNearest(
+    bookings.filter((b) => b.assignedRiders.includes(rider.id) || b.createdBy === `اللاعب: ${rider.name}`)
+  );
 
   // Helper to check if a rider is busy on a given date (has a booking on that date)
   const isRiderBusyOnDate = (riderId: string, dateStr: string, currentBookingId?: string) => {
@@ -311,9 +314,9 @@ export default function RiderDashboardView({
               return (
                 <div
                   key={booking.id}
-                  className={`glass-card p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-white/10 hover:scale-[1.005] transition-all duration-200 relative ${
+                  className={`glass-card p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-white/10 hover:scale-[1.005] transition-all duration-300 relative ${
                     isPending ? 'heritage-border-gold' : 'heritage-border'
-                  } ${isCompleted ? 'opacity-70' : ''}`}
+                  } ${isCompleted ? 'opacity-45 grayscale-[45%] saturate-50 blur-[0.75px] hover:opacity-90 hover:grayscale-0 hover:blur-0' : ''}`}
                 >
                   <div className="flex flex-col gap-1 w-full md:w-auto">
                     <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-1">
